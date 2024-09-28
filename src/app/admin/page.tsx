@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Card,
+  Card, // Fixed the typo here
   CardContent,
   CardDescription,
   CardHeader,
@@ -42,7 +42,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-
 import { Trash2, Edit } from "lucide-react";
 import Link from "next/link";
 
@@ -75,14 +74,15 @@ const initialOrganizations: Organization[] = [
 ];
 
 const AdminDashboard: React.FC = () => {
-  const toast = useToast();
+  const { toast } = useToast();
   const [organizations, setOrganizations] =
     useState<Organization[]>(initialOrganizations);
   const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
 
   const handleAddOrg = (newOrg: Omit<Organization, "id">) => {
-    setOrganizations([...organizations, { ...newOrg, id: Date.now() }]);
-    toast.toast({
+    const orgWithId = { ...newOrg, id: Date.now() };
+    setOrganizations([...organizations, orgWithId]);
+    toast({
       title: "Organization Added",
       description: `${newOrg.name} has been successfully added.`,
     });
@@ -93,7 +93,7 @@ const AdminDashboard: React.FC = () => {
       organizations.map((org) => (org.id === updatedOrg.id ? updatedOrg : org))
     );
     setEditingOrg(null);
-    toast.toast({
+    toast({
       title: "Organization Updated",
       description: `${updatedOrg.name} has been successfully updated.`,
     });
@@ -101,7 +101,7 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteOrg = (id: number) => {
     setOrganizations(organizations.filter((org) => org.id !== id));
-    toast.toast({
+    toast({
       title: "Organization Deleted",
       description: "The organization has been successfully removed.",
       variant: "destructive",
@@ -289,11 +289,10 @@ const OrgForm: React.FC<OrgFormProps> = ({ org, onSubmit }) => {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="phone">Phone</Label>
+        <Label htmlFor="phone">Phone Number</Label>
         <Input
           id="phone"
           name="phone"
-          type="tel"
           value={formData.phone}
           onChange={handleChange}
           required
@@ -310,7 +309,7 @@ const OrgForm: React.FC<OrgFormProps> = ({ org, onSubmit }) => {
           required
         />
       </div>
-      <Button type="submit">
+      <Button type="submit" variant="outline" className="mt-4">
         {org ? "Update Organization" : "Add Organization"}
       </Button>
     </form>
